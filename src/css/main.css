@@ -1,0 +1,128 @@
+body,html{height:100%;margin:0;overflow:hidden;
+	background-color : black;
+	font-family:monospace;cursor:default;}
+
+
+
+canvas
+{
+	background-color : black;
+}
+.viewport
+{
+	position:relative;float:left;overflow:hidden;width:100%;
+	height:100%;
+
+	-webkit-perspective:700px;-moz-perspective:700px;-ms-perspective:700px;perspective:700px;
+}
+
+.world
+{
+	position:absolute;left:50%;top:50%;
+	transform-style:preserve-3d;
+	-webkit-transform-style:preserve-3d;-moz-transform-style:preserve-3d;-ms-transform-style:preserve-3d;
+	transform-style:preserve-3d
+}
+
+.plane
+{
+	position:absolute;-webkit-transform-origin:0 0 0;
+	-webkit-backface-visibility:hidden;-moz-transform-origin:0 0 0;
+	-moz-backface-visibility:hidden;-ms-transform-origin:0 0 0;
+	-ms-backface-visibility:hidden;backface-visibility:hidden
+}
+
+
+.wall
+{
+    animation-name: wall;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	background: black linear-gradient(to bottom, #000000 0%, #00FFFF 10%, #00FFFF 20%, #000000 30%);
+    background-repeat: no-repeat;
+
+}
+
+.glitch
+{
+	background : transparent;
+	transform-origin: 50% 50%;
+}
+.floor
+{
+    animation-name: floor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+
+	background :  rgba(0,255,255,1);
+}
+
+.ceil
+{
+	animation-name: ceil;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+
+	background : rgba(0,255,255,1);
+}
+@keyframes floor {
+    0% {opacity: 0.5;}
+    10% {opacity: 0.5;}
+	70% {opacity: 0.5;}
+	85% {opacity: 1;}
+	100% {opacity: 0.5;}
+}
+
+
+@keyframes ceil	{
+    0% {opacity: 0.75;}
+    10% {opacity: 1;}
+    30% {opacity: 0.5;}
+	90% {opacity: 0.5;}
+    100% {opacity: 0.75;}
+}
+
+
+@keyframes wall	{
+	from { background-position: 0% -150px; }
+	to { background-position: 0% 650px; }
+}
+.background
+{
+	background-color:black;
+	width:100vw;
+	height:100vh;
+	position:fixed;
+}
+
+.HUD
+{
+	position :fixed;
+	color : red;
+	width: 100vw;
+	height:  100vh;
+	z-index:100;
+}
+
+.remainingTime
+{
+	width : 100%;
+	text-align:center;
+	color : white;
+}
+
+.data
+{
+	background : transparent /*rgba(0,0,0,0.5)*/;
+}
+
+#attackLoader
+{
+	position : fixed;
+	width : 100vw;
+	height : 100vh;
+	top : 0;
+	left : 0;
+	background: transparent;
+}
