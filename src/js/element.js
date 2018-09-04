@@ -71,4 +71,11 @@ function Ennemy(x,y)
 		this.hp -= much;
 		if(this.hp <=0)this.mustRemove = true;
 	}
+	
+	this.checkLaserbeam = function(x,y,rot)
+	{
+		var dist = distPointLine(x,y,rot,this.x,this.y);
+		console.log(dist);
+		if(dist<100)this.takeDamage(1.5);
+	}
 }

@@ -16,7 +16,7 @@
     "url": "https://github.com/lucaspenney/js13k-toolkit/issues"
   },
   "dependencies": {
-    "browser-sync": "^2.24.6",
+    "browser-sync": "^2.24.7",
     "google-closure-compiler": "^20180805.0.0"
   },
   "devDependencies": {

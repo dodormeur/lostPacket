@@ -19,6 +19,13 @@ var levelReached = 0;
 var attackLoadingFrame = 0;
 var frameNeededAttack = [20.0,100.0,300.0];
 
+var laserbeam = 0;
+
+var UP_KEY = 87;
+var DOWN_KEY = 83;
+var LEFT_KEY = 65;
+var RIGHT_KEY = 68;
+var actualKeyboard = 0;
 
 /** @constructor */
 function Game()
@@ -40,9 +47,9 @@ function Game()
 
 		if(this.started)
 		{
-			if (pressed[83]) {
+			if (pressed[DOWN_KEY]) {
 				if (forwardSpeed > -maxSpeed) forwardSpeed -= accel;
-			} else if (pressed[90]) {
+			} else if (pressed[UP_KEY]) {
 				if (forwardSpeed < maxSpeed) forwardSpeed += accel;
 			}  else if (Math.abs(forwardSpeed) < 0.4) {
 				forwardSpeed = 0;
@@ -50,9 +57,9 @@ function Game()
 				forwardSpeed /= 1.1;
 			}
 
-			if (pressed[81]) {
+			if (pressed[LEFT_KEY]) {
 				if (strafeSpeed > -maxSpeed) strafeSpeed -= accel;
-			} else if (pressed[68]) {
+			} else if (pressed[RIGHT_KEY]) {
 				if (strafeSpeed < maxSpeed) strafeSpeed += accel;
 			} else if (Math.abs(strafeSpeed) < 0.4) {
 				strafeSpeed = 0;
@@ -103,6 +110,7 @@ function Game()
 			}
 		}
 
+		if(laserbeam>0)laserbeam--;
 		if(mouseDown)attackLoadingFrame++;
 		else
 		{
@@ -127,6 +135,10 @@ function Game()
 				ennemies[i].mustRemove = true;
 			}
 
+			if(laserbeam > 0)
+			{
+				ennemies[i].checkLaserbeam(positionX,positionY,rotationZ)
+			}
 			else if(ennemies[i].collide(positionX,positionY,100))
 			{
 				console.log("dead");
@@ -148,7 +160,7 @@ function Game()
 			this.gameOver();
 		}
 
-		if((survivedFrames%1000) == 1 && this.started)
+		if((survivedFrames%10000) == 1 && this.started)
 		{
 			if(spawnPosition && spawnPosition.length>0)
 			{
@@ -163,15 +175,16 @@ function Game()
 	{
 		switch(which)
 		{
-			case 0:
+			case 0: //small bullet going to an ennemy
 			console.log("basic attack")
 			break;
 
-			case 1:
+			case 1: // shockwave
 			console.log("middle attack")
 			break;
-			case 2:
+			case 2: // laserbeam
 			console.log("strong attack")
+			laserbeam = 180;
 			break;
 		}
 	}

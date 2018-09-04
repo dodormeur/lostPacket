@@ -24,6 +24,37 @@ function addCube(world,x,y,w,what)
 
 var world
 
+
+function switchKeyBoard()
+{
+    actualKeyboard++;
+    actualKeyboard %= 3;
+    switch(actualKeyboard)
+    {
+        case 1: //azerty
+            UP_KEY = 83;
+            DOWN_KEY = 90;
+            LEFT_KEY = 81;
+            RIGHT_KEY = 68;
+            document.getElementById("keyboardType").innerHTML = 'azerty';
+        break;
+        case 0: //qwerty
+            UP_KEY = 87;
+            DOWN_KEY = 83;
+            LEFT_KEY = 65;
+            RIGHT_KEY = 68;
+            document.getElementById("keyboardType").innerHTML = 'qwerty';
+        break;
+        case 2: //arrow key
+            UP_KEY = 38;
+            DOWN_KEY = 40;
+            LEFT_KEY = 37;
+            RIGHT_KEY = 39;
+            document.getElementById("keyboardType").innerHTML = 'arrows';
+        break;
+    }
+}
+
 window.onload = function() {
 
 //	setCookie("save","tesmp",365);
@@ -67,6 +98,8 @@ window.onload = function() {
 		var speed = 0.5;
 		game.rotate(-ev.movementY*speed,0,ev.movementX/2)
 	}
+
+    document.getElementById("keyboardButton").onclick=switchKeyBoard;
 
 
 	document.getElementById("statButton").onclick=function(e)
