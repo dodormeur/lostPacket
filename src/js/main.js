@@ -25,6 +25,7 @@ function addCube(world,x,y,w,what)
 var world
 
 
+//TODO : https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game
 function switchKeyBoard()
 {
     actualKeyboard++;
@@ -32,8 +33,8 @@ function switchKeyBoard()
     switch(actualKeyboard)
     {
         case 1: //azerty
-            UP_KEY = 83;
-            DOWN_KEY = 90;
+            UP_KEY = 90;
+            DOWN_KEY = 83;
             LEFT_KEY = 81;
             RIGHT_KEY = 68;
             document.getElementById("keyboardType").innerHTML = 'azerty';
@@ -55,6 +56,13 @@ function switchKeyBoard()
     }
 }
 
+function showMainMenu()
+{
+document.getElementById("gameOver").classList.add("hidden");
+document.getElementById("menu").classList.remove("hidden");
+
+}
+
 window.onload = function() {
 
 //	setCookie("save","tesmp",365);
@@ -74,6 +82,7 @@ window.onload = function() {
 	load();
 	var viewport = new Viewport( document.body );
 	world = new World( viewport );
+
 	var game = new Game();
 	var keyState = {
 		forward: false,
@@ -93,7 +102,7 @@ window.onload = function() {
 	viewport.camera.rotation.z=0
 	viewport.camera.update();
 
-
+	switchKeyBoard()
 	var input = function(ev) {
 		var speed = 0.5;
 		game.rotate(-ev.movementY*speed,0,ev.movementX/2)
@@ -178,6 +187,8 @@ window.onload = function() {
 
 		}
 		drawLoadingAttack();
+		drawShockWave();
+		drawMap();
 		window.requestAnimationFrame(timing);
 	}
 

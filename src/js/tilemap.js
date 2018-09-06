@@ -126,7 +126,6 @@ function loadFlowMap(which)
 			}
 		}
 	}
-	console.log(flowMap);
 }
 
 
@@ -157,10 +156,13 @@ var isPositionValid = function(x,y,pad)
 function createFromTilemap(map,scale)
 {
 	world.removeAllPlanes();
+	bullets = [];
+	pointerActive = 0;
 	var w = map.length*scale;
 	var h = map[0].length*scale;
 	world.addPlane( new Plane("floor", w, h, 0, h, 53, 180, 0, 0));
 	world.addPlane( new Plane("ceil", w, h, 0, 0, -447, 0, 0, 0));
+	world.addPlane( new Plane("shockwave", 4000, 4000, 0, 0, -80, 180, 0, 0));
 
 	for(var i = 0;i<map.length;i++)
 	{

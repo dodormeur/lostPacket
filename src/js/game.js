@@ -17,14 +17,24 @@ var spawnPosition = [];
 var scores = [];
 var levelReached = 0;
 var attackLoadingFrame = 0;
-var frameNeededAttack = [20.0,100.0,300.0];
+var frameNeededAttack = [20.0,80.0,200.0];
+
 
 var laserbeam = 0;
+
+var shockWaveX = 0;
+var shockWaveY = 0;
+var shockWaveSize = -1;
+var shockWaveFrame = 0;
+var shockWaveMaxSize = 2000;
+var framesToNextEnnemy = 500;
+var difficultyEnnemy = 0;
 
 var UP_KEY = 87;
 var DOWN_KEY = 83;
 var LEFT_KEY = 65;
 var RIGHT_KEY = 68;
+var SPACE_KEY = 32;
 var actualKeyboard = 0;
 
 /** @constructor */
@@ -32,21 +42,26 @@ function Game()
 {
 	loadMap(0);
 	this.started = false;
+	this.mainMenu = true;
 
 
 	this.startGame = function()
 	{
 		loadMap(1);
 		this.started = true;
+		this.mainMenu = false;
 		survivedFrames = 0;
+		difficultyEnnemy = 0;
+		framesToNextEnnemy = 500;
 	}
 	this.frame = function()
 	{
-		survivedFrames++;
+		shockWaveFrame++;
 		document.getElementById("frameAlive").innerHTML = Math.floor(survivedFrames/100);
 
 		if(this.started)
 		{
+			survivedFrames++;
 			if (pressed[DOWN_KEY]) {
 				if (forwardSpeed > -maxSpeed) forwardSpeed -= accel;
 			} else if (pressed[UP_KEY]) {
@@ -67,19 +82,11 @@ function Game()
 				strafeSpeed /= 1.1;
 			}
 		}
-		else
+		else if(this.mainMenu)
 		{
 			strafeSpeed = 3;
 			rotationZ -= 0.12;
 		}
-
-		/*if(positionZ>150)upSpeed-=0.5;
-		else upSpeed = 0;
-
-		if(pressed[32] && positionZ == 150)
-		{
-			upSpeed = 10;
-		}*/
 
 
 		var xo = Math.sin(rotationZ * 0.0174532925);
@@ -110,8 +117,20 @@ function Game()
 			}
 		}
 
+		if(laserbeam == 1)
+		{
+			document.getElementById("laserbeam").classList.remove("laserbeamActive");
+		}
 		if(laserbeam>0)laserbeam--;
-		if(mouseDown)attackLoadingFrame++;
+
+		if(shockWaveSize != -1)
+		{
+			shockWaveSize+= 30;
+			if(shockWaveSize >= shockWaveMaxSize)shockWaveSize = -1;
+		}
+		frameBullet();
+
+		if((mouseDown || pressed[SPACE_KEY]) && this.started)attackLoadingFrame++;
 		else
 		{
 			for(var i = frameNeededAttack.length-1;i>=0;i--)
@@ -134,16 +153,21 @@ function Game()
 				flag = true;
 				ennemies[i].mustRemove = true;
 			}
+			else if(ennemies[i].collide(positionX,positionY,100))
+			{
+				this.gameOver();
+				ennemies[i].mustRemove = true;
+			}
 
 			if(laserbeam > 0)
 			{
 				ennemies[i].checkLaserbeam(positionX,positionY,rotationZ)
 			}
-			else if(ennemies[i].collide(positionX,positionY,100))
+			if(shockWaveSize != -1)
 			{
-				console.log("dead");
-				ennemies[i].mustRemove = true;
+				ennemies[i].checkShockWave(shockWaveX,shockWaveY,shockWaveSize,shockWaveFrame)
 			}
+
 		}
 
 		for(var i = ennemies.length-1;i>=0;i--)
@@ -160,8 +184,16 @@ function Game()
 			this.gameOver();
 		}
 
-		if((survivedFrames%10000) == 1 && this.started)
+		if((survivedFrames%framesToNextEnnemy) == 1 && this.started)
 		{
+			console.log('spawning '+framesToNextEnnemy);
+			if(framesToNextEnnemy>400)framesToNextEnnemy-=5;
+			if(framesToNextEnnemy>300)framesToNextEnnemy-=5;
+			if(framesToNextEnnemy>200)framesToNextEnnemy-=5;
+			if(framesToNextEnnemy>150)framesToNextEnnemy-=3;
+			if(framesToNextEnnemy>100)framesToNextEnnemy--;
+			if(framesToNextEnnemy>50)framesToNextEnnemy--;
+			difficultyEnnemy++;
 			if(spawnPosition && spawnPosition.length>0)
 			{
 				var pos = spawnPosition[Math.floor(spawnPosition.length*Math.random())];
@@ -171,27 +203,69 @@ function Game()
 
 	}
 
+
+
 	this.launchAttack = function(which)
 	{
 		switch(which)
 		{
 			case 0: //small bullet going to an ennemy
-			console.log("basic attack")
+			shootBullet()
 			break;
 
 			case 1: // shockwave
-			console.log("middle attack")
+			shockWaveX = positionX;
+			shockWaveY = positionY;
+			shockWaveFrame = 0;
+			shockWaveSize = 0;
+
 			break;
 			case 2: // laserbeam
-			console.log("strong attack")
 			laserbeam = 180;
+			document.getElementById("laserbeam").classList.add("laserbeamActive");
 			break;
 		}
 	}
+
+
 	this.gameOver = function()
 	{
-		console.log("data corrupted !");
+		if(!this.started)return;
+		forwardSpeed= 0;
+		strafeSpeed = 0;
+		var scoreT = Math.floor(survivedFrames/100);
+		document.exitPointerLock();
+		document.getElementsByTagName("BODY")[0].onclick = function(){return false;}
+		this.started = false;
+		document.getElementById("gameOver").classList.remove("hidden");
+		document.getElementById("ingame").classList.add("hidden");
+		document.getElementById("score").innerHTML = scoreT;
+
+		var flag = true;
+		for(var i = 0;i<scores.length;i++)
+		{
+			if(scoreT>=scores[i])
+			{
+				scores.splice(i, 0, scoreT);
+				document.getElementById("scorePosition").innerHTML = "you are number "+(i+1)+" in the leaderboard !";
+				flag = false;
+				break;
+			}
+		}
+
+		if(scores.length<10 && flag){
+			document.getElementById("scorePosition").innerHTML = "you are number "+(scores.length+1)+" in the leaderboard !";
+			scores.push(scoreT);
+		}
+
+		if(scores.length>=10)scores.splice(-1,1)
+		save();
+		document.getElementById("gameOver").onclick = function()
+		{
+			showMainMenu();
+		}
 	}
+
 
 	this.rotate = function(x,y,z)
 	{

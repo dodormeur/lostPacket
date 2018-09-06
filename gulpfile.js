@@ -86,7 +86,7 @@ gulp.task('build-assets', (done) => {
 });
 
 gulp.task('zip', (done) => {
-	return gulp.src('./buildReplaced/**/*')
+	return gulp.src('./build/**/*')
 		.pipe(zip('entry.zip')) //gulp-zip performs compression by default
 		.pipe(gulp.dest('dist'));
 });

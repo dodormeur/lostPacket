@@ -51,10 +51,13 @@ Camera.prototype = {
 
 			var temp = this;
 			elementFacingCamera.forEach(function(e){ //TODO : correct facing camera
-				var angle = -Math.atan2(-temp.position.y-(e.y),-temp.position.x-(e.x))*180/Math.PI;
-				e.node.style.cssText = CssUtils.translate( e.x, e.y, -e.z, 270, 90+angle,180)+"width:" + e.width + "px;" +
-					"height:" + e.height + "px;";
-				//console.log(e.node.style.cssText);
+				if(e.active)
+				{
+					var angle = -Math.atan2(-temp.position.y-(e.y),-temp.position.x-(e.x))*180/Math.PI;
+					e.node.style.cssText = CssUtils.translate( e.x, e.y, -e.z, 270, 90+angle,180)+"width:" + e.width + "px;" +
+						"height:" + e.height + "px;";
+					//console.log(e.node.style.cssText);
+				}
 			});
 		}
 	}
@@ -93,6 +96,17 @@ function Plane( colour, w,h,x,y,z,rx,ry,rz) {
 	{
 		this.node = document.createElement("canvas")
 		this.node.className="plane data"
+	}
+	else if(colour == "shockwave")
+	{
+		this.node = document.createElement("div")
+		this.node.className="plane shockwave"
+		this.node.id ="shockwave"
+	}
+	else if(colour == "bullet")
+	{
+		this.node = document.createElement("div")
+		this.node.className="plane bullet"
 	}
 	this.width = w;
 	this.height = h;

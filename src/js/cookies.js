@@ -45,6 +45,7 @@ function save()
 		toSave.push(scores[i]);
 	console.log(JSON.stringify(toSave));
 	setCookie("save",JSON.stringify(toSave),365);
+	load(); //refresh. Don't judge please
 }
 
 function setCookie(cname, cvalue, exdays) {
